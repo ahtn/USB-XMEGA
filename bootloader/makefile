@@ -71,7 +71,7 @@ ASRC = sp_driver.S
 # Optimization level, can be [0, 1, 2, 3, s].
 #     0 = turn off optimization. s = optimize for size.
 #     (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = 3
+OPT = s
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
@@ -234,7 +234,7 @@ LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 LDFLAGS += -Wl,--section-start=.text=$(BOOT_SECTION_START)
 LDFLAGS += -Wl,--section-start=.noinit=0x802400 # magic flag for bootloader entry
-LDFLAGS += -Wl,--section-start=.boot-entry=$(shell python -c "print hex($(BOOT_SECTION_START)+4096-8)")
+LDFLAGS += -Wl,--section-start=.boot-entry=$(shell python -c "print(hex($(BOOT_SECTION_START)+4096-8))")
 
 #---------------- Programming Options (avrdude) ----------------
 
@@ -247,7 +247,7 @@ AVRDUDE_PROGRAMMER = avrispmkii
 # com1 = serial port. Use lpt1 to connect to parallel port.
 AVRDUDE_PORT = usb
 
-AVRDUDE_WRITE_FLASH = -e -U boot:w:$(TARGET).hex
+AVRDUDE_WRITE_FLASH = -e -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
 
@@ -367,13 +367,11 @@ sizeafter:
 program: $(TARGET).hex $(TARGET).eep
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
-REPOSITION_BOOTLOADER += --change-addresses -$(BOOT_SECTION_START)
-
 # Create final output files (.hex, .eep) from ELF output file.
 %.hex: %.elf
 	@echo
 	@echo $(MSG_FLASH) $@
-	$(OBJCOPY) $(REPOSITION_BOOTLOADER) -O $(FORMAT) -R .eeprom -R .fuse -R .lock $< $@
+	$(OBJCOPY) -O $(FORMAT) -R .eeprom -R .fuse -R .lock $< $@
 
 %.eep: %.elf
 	@echo
