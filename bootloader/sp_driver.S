@@ -167,7 +167,7 @@ SP_ReadWord:
 ; ---
 
 .section .text
-.global SP_ReadCalibrationByte	
+.global SP_ReadCalibrationByte
 
 SP_ReadCalibrationByte:
 	ldi	r20, NVM_CMD_READ_CALIB_ROW_gc    ; Prepare NVM command in R20.
@@ -185,7 +185,7 @@ SP_ReadCalibrationByte:
 ;     R24 - Signature byte.
 ; ---
 
-.section .text	
+.section .text
 .global SP_ReadUserSignatureByte
 
 SP_ReadUserSignatureByte:
@@ -204,7 +204,7 @@ SP_ReadUserSignatureByte:
 ;     R24 - Fuse byte.
 ; ---
 
-.section .text	
+.section .text
 .global SP_ReadFuseByte
 
 SP_ReadFuseByte:
@@ -230,7 +230,7 @@ SP_ReadFuseByte:
 ;     Nothing.
 ; ---
 
-.section .text	
+.section .text
 .global SP_WriteLockBits
 
 SP_WriteLockBits:
@@ -250,7 +250,7 @@ SP_WriteLockBits:
 ;     R24 - Lock bits.
 ; ---
 
-.section .text		
+.section .text
 .global SP_ReadLockBits
 
 SP_ReadLockBits:
@@ -333,7 +333,7 @@ SP_EraseApplicationSection:
 ;     Nothing.
 ; ---
 
-.section .text	
+.section .text
 .global SP_EraseApplicationPage
 
 SP_EraseApplicationPage:
@@ -381,7 +381,7 @@ SP_LoadFlashWord:
 ; Returns:
 ;     Nothing.
 ; ---
-		
+
 ;.section .BOOT, "ax"
 .global SP_LoadFlashPage
 
@@ -436,7 +436,7 @@ SP_LoadFlashPage_1:
 ;     Nothing.
 ; ---
 
-.section .text		
+.section .text
 .global SP_ReadFlashPage
 
 SP_ReadFlashPage:
@@ -453,7 +453,7 @@ SP_ReadFlashPage:
 
 #if APP_SECTION_PAGE_SIZE > 512
 	ldi	r22, ((APP_SECTION_PAGE_SIZE/2) >> 8) ; Load R22 with byte cont high if flash page is large.
-#endif	
+#endif
 
 	ldi	r21, ((APP_SECTION_PAGE_SIZE)&0xFF)   ; Load R21 with byte count.
 
@@ -468,7 +468,7 @@ SP_ReadFlashPage_1:
 	sbci	r22, 0
 #else
 	dec	r21                             ; Decrement word count.
-#endif	
+#endif
 
 	brne	SP_ReadFlashPage_1              ; Repeat until byte count is zero.
 
@@ -488,7 +488,7 @@ SP_ReadFlashPage_1:
 ;     Nothing.
 ; ---
 
-.section .text		
+.section .text
 .global SP_WriteApplicationPage
 
 SP_WriteApplicationPage:
@@ -534,7 +534,7 @@ SP_EraseWriteApplicationPage:
 ;     Nothing.
 ; ---
 
-.section .text		
+.section .text
 .global SP_EraseFlashBuffer
 
 SP_EraseFlashBuffer:
@@ -555,7 +555,7 @@ SP_EraseFlashBuffer:
 ;     Nothing.
 ; ---
 
-.section .text		
+.section .text
 .global SP_EraseBootPage
 
 SP_EraseBootPage:
@@ -578,7 +578,7 @@ SP_EraseBootPage:
 ;     Nothing.
 ; ---
 
-.section .text		
+.section .text
 .global SP_WriteBootPage
 
 SP_WriteBootPage:
@@ -602,7 +602,7 @@ SP_WriteBootPage:
 ;     Nothing.
 ; ---
 
-.section .text		
+.section .text
 .global SP_EraseWriteBootPage
 
 SP_EraseWriteBootPage:
@@ -624,7 +624,7 @@ SP_EraseWriteBootPage:
 ;     R25:R24:R23:R22 - 32-bit CRC result (actually only 24-bit used).
 ; ---
 
-.section .text	
+.section .text
 .global SP_ApplicationCRC
 
 SP_ApplicationCRC:
@@ -671,7 +671,7 @@ SP_LockSPM:
 	ldi	r18, NVM_SPMLOCK_bm   ; Prepare bitmask for locking SPM into R18.
 	sts	NVM_CTRLB, r18        ; Load bitmask into NVM Control Register B, which locks SPM.
 	ret
-	
+
 
 
 ; ---
@@ -688,7 +688,7 @@ SP_LockSPM:
 ; ---
 
 .section .text
-.global SP_WaitForSPM		
+.global SP_WaitForSPM
 
 SP_WaitForSPM:
 	lds	r18, NVM_STATUS     ; Load the NVM Status register.
@@ -717,7 +717,7 @@ SP_WaitForSPM:
 ;     R25:R24:R23:R22 - 32-bit result from NVM operation.
 ; ---
 
-.section .text		
+.section .text
 
 SP_CommonCMD:
 	sts	NVM_CMD, r20        ; Load command into NVM Command register.
@@ -748,7 +748,7 @@ SP_CommonCMD:
 ;     R24     - Result from LPM operation.
 ; ---
 
-.section .text		
+.section .text
 
 SP_CommonLPM:
 	movw	ZL, r24             ; Load index into Z.
@@ -788,7 +788,6 @@ SP_CommonSPM:
 	clr	r1               ; Clear R1 for GCC _zero_reg_ to function properly.
 	out	RAMPZ, r19       ; Restore RAMPZ register.
 	ret
-	
-	
+
 ; END OF FILE
 

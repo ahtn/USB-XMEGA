@@ -65,7 +65,7 @@ CPPSRC =
 #     Even though the DOS/Win* filesystem matches both .s and .S the same,
 #     it will preserve the spelling of the filenames, and gcc itself does
 #     care about how the name is spelled on its command-line.
-ASRC = sp_driver.S
+ASRC = sp_driver.S mine.S
 
 
 # Optimization level, can be [0, 1, 2, 3, s].
@@ -228,10 +228,13 @@ endif
 #    --cref:    add cross reference to  map file
 LDFLAGS  = -Wl,-Map=$(TARGET).map,--cref
 LDFLAGS += -Wl,--relax
-LDFLAGS += -Wl,--gc-sections
+# LDFLAGS += -Wl,--gc-sections
+# LDFLAGS += -Wl,-T./avrxmega2.xn
 LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
+LDFLAGS += -Wl,--section-start=.test_data=0x007000
+LDFLAGS += -Wl,--section-start=.mytest=0x008C00
 LDFLAGS += -Wl,--section-start=.text=$(BOOT_SECTION_START)
 LDFLAGS += -Wl,--section-start=.noinit=0x802400 # magic flag for bootloader entry
 LDFLAGS += -Wl,--section-start=.boot-entry=$(shell python -c "print(hex($(BOOT_SECTION_START)+4096-8))")
@@ -364,8 +367,10 @@ sizeafter:
 
 
 # Program the device.
-program: $(TARGET).hex $(TARGET).eep
-	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
+# program: $(TARGET).hex $(TARGET).eep
+# 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
+program: $(TARGET).hex
+	avrdude-pdi -C ~/local/etc/avrdude-pdi.conf -c usbasp -p x32a4 -U flash:w:$(TARGET).hex:i -E noreset -e
 
 # Create final output files (.hex, .eep) from ELF output file.
 %.hex: %.elf

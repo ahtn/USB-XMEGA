@@ -96,6 +96,7 @@ uint8_t pageBuf[APP_SECTION_PAGE_SIZE];
 
 void pollEndpoint(void);
 
+
 /// Configure the device for bootloader mode and loop responding to bootloader commands
 void runBootloader(void){
 	// Turn on LED
@@ -144,6 +145,16 @@ int main(void){
 	CHECK_PORT.PINCTRL(CHECK_PIN) = PORT_OPC_PULLUP_gc;
 	
 	_delay_us(100);
+
+	PORTA.DIRSET = PIN5_bm | PIN6_bm;
+	PORTA.OUTCLR = PIN5_bm | PIN6_bm;
+
+	/* asm volatile("ldi r22, %0"::"i" (0x00)); */
+	/* asm volatile("ldi r23, %0"::"i" (0x70)); */
+	/* asm volatile("ldi r24, %0"::"i" (0x00)); */
+	/* asm volatile("ldi r25, %0"::"i" (0x00)); */
+	/* asm volatile("call 0x8C00"::: "r18", "r19", "r20", "r21", "r22", "r23", */
+	/* 		"r24", "r25", "r26", "r27", "r30", "r31"); */
 
 	if (!(CHECK_PORT.IN & (1<<CHECK_PIN)) // If the specified pin is pulled LOW
 	|| pgm_read_word(0) == 0xFFFF // Get the value of the reset vector. If it's unprogrammed, we know
